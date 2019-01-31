@@ -1,0 +1,290 @@
+package cs1302.lists;
+//TO DO
+/**
+ * This class implements the GenList interface
+ * and puts elements of a list into a box array
+ * of box objects
+ * 
+ * @param <T> the type of elements in this list
+ * @author David Davenport
+ */
+public class ArrayGenList<T> implements GenList<T>
+{
+ protected int size; //able to use both variables in SortedArrayGenList
+ protected Box <T> [] boxes;
+ /**
+  * Initializes the array of Box and sets the size of
+  * the list equal to zero
+  */
+ public ArrayGenList(){
+ boxes = Box.<T>array(100);
+ size = 0;
+ }//constructor
+
+ /**
+  * Adds the specified element to the list at an implementation-specific
+  * position.
+  * @param elem element to be inserted
+  * @throws NullPointerException if elem is null
+  */
+ public void add(T elem) throws NullPointerException //done
+ {
+	  if (elem == null) 
+		  {
+		  throw new NullPointerException("elem can't be null");
+		  }
+	 if (size >= boxes.length)
+	 {
+		 Box <T> [] newBoxes = Box.<T>array(100*2); //makes a larger array as necessary
+		 boxes = newBoxes;
+	 }
+	  boxes[size] = new Box<T>(elem);//adds new elem to each subsequent space
+	 size++;
+ }//add
+
+ /**
+  * Inserts the specified element at the specified position in this list. 
+  * Shifts the element currently at that position (if any) and any subsequent
+  * elements to the right (adds one to their indices).
+  * @param index index at which the specified element is to be inserted
+  * @param elem  element to be inserted
+  * @throws NullPointerException if elem is null
+  * @throws IndexOutOfBoundsException if the index is out of range 
+  *         {@code (index < 0 || index > size())}
+  */
+ public void add(int index, T elem) throws NullPointerException, IndexOutOfBoundsException
+ {
+  if (elem == null) 
+	  {
+	  throw new NullPointerException("elem can't be null");
+	  }
+  if (index < 0 || index > size()) 
+	  {
+	  throw new IndexOutOfBoundsException("Index out of bounds");
+	  }
+  if (size >= boxes.length)
+  {
+	   Box <T> [] newBoxes = Box.<T>array(100*2); //makes a larger array as necessary
+	  boxes = newBoxes;
+  }
+   if (boxes[index] != null) //if there is an elem at index
+   {
+   for (int i = boxes.length -2; i >= index; i--)
+   {
+   boxes[i+1] = boxes[i]; //shifts elements of the array right
+   }//for
+   boxes[index] = new Box<T>(elem); //inserts elem at index
+   }//if
+   else
+   {
+   boxes[index] = new Box <T>(elem);//if there isn't an elem at index
+   }//else
+  size++;
+ }//add
+
+ /** 
+  * Removes all of the elements from this list. The list will be empty after 
+  * this call returns.
+  */
+ public void clear()
+ {
+  boxes = Box.<T>array(100); //re-initializes the constructor
+  size = 0;					 // to reset 
+ }//clear
+ 
+ /** 
+  * Compares the specified list with this list for equality. Returns 
+  * <code>true</code> if and only if the specified object is also a 
+  * <code>GenList</code>, both lists have the same size, and all corresponding 
+  * pairs of elements in the two lists are equal.
+  * If <code>list</code> is a list of the same list type, then students
+  * may safely cast the object to the appropriate list type when implementing
+  * this method.
+  * @param list the object to be compared for equality with this list
+  * @return <code>true</code> if the specified object is equal to this list
+  */
+ public boolean equals(Object list)
+ {
+ boolean b = false;
+ if (list instanceof GenList == true)
+ {
+  GenList l = (GenList) list; //casts list to Genlist
+   if (l.size() == size()) //checks the sizes for equality
+   {
+	   b = true;
+	   for (int i = 0; i < l.size(); i++) //doesn't matter which size you loop for
+       {
+       if (!(get(i).equals(l.get(i)))) //checks to see if
+       {							   // the elements don't match
+       b = false; //returns false if every element isn't equal
+       }//if
+       }//for
+ }//if
+ }//if
+ return b;
+ }//equals
+ 
+ /**
+  * Returns the element at the specified position in this list.
+  * @param index index of the element to return
+  * @return the element at the specified position in this list
+  * @throws IndexOutOfBoundsException if the index is out of range
+  *         {@code (index < 0 || index >= size())}
+  */
+ public T get(int index) throws IndexOutOfBoundsException
+ {
+  if (index < 0 || index >= size())
+	  {
+	  throw new IndexOutOfBoundsException("Index out of bounds");
+	  }
+  return boxes[index].get(); //returns the elem at the index
+ }//get
+ 
+ /**
+  * Replaces the element at the specified position in this list with the 
+  * specified element
+  * @param index index of the element to replace
+  * @param elem element to be stored at the specified position
+  * @return the element previously at the specified position
+  * @throws NullPointerException if the specified element is null
+  * @throws IndexOutOfBoundsException if the index is out of range
+  *         {@code (index < 0 || index >= size())}
+  */
+public T set(int index, T elem) throws NullPointerException, IndexOutOfBoundsException
+ {
+  if (elem == null) 
+	  {
+	  throw new NullPointerException("elem can't be null");
+	  }
+  if (index < 0 || index >= size()) 
+	  {
+	  throw new IndexOutOfBoundsException("Index out of bounds");
+	  }
+  Box<T> temp = boxes[index]; //holds the indexed value in a temp box
+  boxes[index] = new Box <T>(elem); //assigns the new value at the index
+  return temp.get(); //returns the indexed temp value
+ }//set
+ 
+/**
+ * Returns the number of elements in this list. If this list contains more 
+ * than <code>Integer.MAX_VALUE</code> elements, return 
+ * <code>Integer.MAX_VALUE</code>.
+ * @return the number of elements in this list
+ */
+ public int size()
+ {
+ int largestInt = Integer.MAX_VALUE; //assigns the largest Int to a variable
+ if (size > largestInt-1)
+ {
+  return largestInt;
+ }//if
+ else
+ {
+ return size;
+ }//else
+ }//size
+ 
+ /**
+  * Returns true if and only if this list contains no elements.
+  * @return <code>true</code> if this list contains no elements
+  */ 
+ public boolean isEmpty()
+ {
+ boolean b = true;
+ for (int i = 0; i < size; i++)
+ {
+   if (boxes[i] != null) //checks the list for no null values
+   {
+   b = false;
+   break;
+   }//if
+ }//for
+ return b;
+ }//isEmpty
+ 
+ /**
+  * Returns <code>true</code> if this list contains the specified element. 
+  * More formally, returns <code>true</code> if and only if this list 
+  * contains at least one element <code>o</code> such that 
+  * <code>o.equals(elem)</code>.
+  * @param elem element whose presence in this list is to be tested
+  * @return <code>true</code> if this list contains the specified element
+  * @throws NullPointerException if elem is null
+  */
+ public boolean contains(T elem) throws NullPointerException 
+ {
+  if (elem == null) 
+	  {
+	  throw new NullPointerException("elem can't be null");
+	  }
+  boolean b = false;
+  for (int i = 0; i < size; i++)
+  {
+  if (boxes[i].get().equals(elem)) //checks to see if the 
+  {								  // element is in the list
+  b = true;
+  }//if
+  }//for
+  return b;
+ }//contains
+ 
+ /** 
+  * Removes the first occurrence of the specified element from this list, if 
+  * it is present. If this list does not contain the element, it is 
+  * unchanged. More formally, removes the element with the lowest index 
+  * <code>i</code> such that <code>elem.equals(get(i))</code> (if such an 
+  * element exists). Returns <code>true</code> if this list contained the 
+  * specified element (or equivalently, if this list changed as a result of 
+  * the call).
+  * @param elem element to be removed from this list, if present
+  * @return <code>true</code> if this list contained the specified element
+  * @throws NullPointerException if elem is null
+  */
+ public boolean remove(T elem) throws NullPointerException
+ {
+  if (elem == null)
+	  {
+	  throw new NullPointerException("elem can't be null");
+	  }
+  for (int i = 0; i < size; i++)
+  {
+	  if (boxes[i].get().equals(elem))
+     {
+     boxes[i] = null; //removes the elem 
+     for (int j = i; j < size(); j++)
+     { 
+    	 boxes[j] = boxes[j+1]; //loop to shift elements left
+     }//for
+     size--;
+     return true; //returns true since elem was removed
+     }//if 
+  }//for
+  return false;
+ }//remove
+ 
+ /**
+  * Returns the index of the first occurrence of the specified element in 
+  * this list, or -1 if this list does not contain the element.
+  * @param elem element to search for
+  * @return the index of the first occurrence of the specified element in 
+  *         this list, or -1 if this list does not contain the element
+  * @throws NullPointerException if elem is null
+  */
+ public int indexOf(T elem) throws NullPointerException
+ {
+	 int index;
+	 if (elem == null) 
+	 {
+		 throw new NullPointerException("elem can't be null");
+	 }
+    for (int i = 0; i < size; i++)
+    {
+     if (boxes[i].get().equals(elem))
+      {
+    	  index = i; //returns the first index of elem
+        return index; 
+      }//if
+    }//for
+    return -1; //returns -1 otherwise
+ }//indexOf
+}//class
