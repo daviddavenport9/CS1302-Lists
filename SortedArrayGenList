@@ -1,0 +1,125 @@
+package cs1302.lists;
+
+/**
+ * This class extends the ArrayGenList class and also
+ * and puts elements of a list into a box array
+ * of box objects but in a sorted fashion. It 
+ * extends Comparable in order to allow for
+ * comparisons of elements
+ * 
+ * @param <T> the type of elements in this list
+ * @param Comparable<T> enables comparison of generics
+ * @author David Davenport
+ */
+public class SortedArrayGenList<T extends Comparable<T>> extends ArrayGenList<T>
+{
+/**
+ * Calls the constructor from
+ * the parent class
+ */
+public SortedArrayGenList()
+{
+	super();
+}
+
+/**
+ * Sorts elements of the list in least
+ * to greatest order using Comparable
+ * and bubble sort
+ */
+public void sort()
+{
+ if (size > 1) //checks to make sure there is more than 1 elem
+  {
+   for (int i = size; i >= 0; i--) //implements bubble sort
+    {
+     for(int j = 0; j <= i -1; j++)
+	  {
+	   /*
+	    * Checks to see if the specified 
+	    * position at j comes after the 
+	    * next position at j + 1 and swap
+	    * them if so
+	    */
+    	if (boxes[j].get().compareTo(boxes[j+1].get()) > 0)  
+		{ 
+		 Box <T> temp = boxes[j]; //swaps the positions
+		 boxes[j] = boxes[j+1];
+		 boxes[j+1] = temp;
+		}//if
+	   }//for
+     }//for
+  }//if
+}//sort
+
+/**
+ * Sorts the list using the sort method every time an
+ * element is added
+ * 
+ * {@inheritDoc}
+ * 
+ */
+@Override
+ public void add(T elem) throws NullPointerException //done
+ {
+	  if (elem == null) 
+		  {
+		  throw new NullPointerException("elem can't be null");
+		  }
+    if (size >= boxes.length)
+	{
+		Box <T> [] newBoxes = Box.<T>array(100*2); //makes a larger array as necessary
+		boxes = newBoxes;
+	}
+	  boxes[size] = new Box<T>(elem);
+	 sort();//sorts the list after an element is added
+	 size++;
+ }//add
+ 
+ /**
+  *Calls the add(T elem) method since
+  *the index will be irrelevant in the case
+  *where the list is sorted
+  * 
+  * {@inheritDoc}
+  * 
+  */
+@Override
+ public void add(int index, T elem) throws NullPointerException, IndexOutOfBoundsException
+ {
+  if (elem == null) 
+	  {
+	  throw new NullPointerException("elem can't be null");
+	  }
+  if (index < 0 || index > size) 
+	  {
+	  throw new IndexOutOfBoundsException("Index out of bounds");
+	  }
+  add(elem); //calls the add(T elem)
+ }//add
+
+ /**
+  * Stores the replaced element in a temp
+  * variable and then removes that element from the
+  * list. The new element is then added and sorted
+  * accordingly.
+  * {@inheritDoc}
+  * 
+  */
+@Override
+ public T set(int index, T elem) throws NullPointerException, IndexOutOfBoundsException
+ {
+  if (elem == null) 
+	  {
+	  throw new NullPointerException("elem can't be null");
+	  }
+  if (index < 0 || index >= size()) 
+	  {
+	  throw new IndexOutOfBoundsException("Index out of bounds");
+	  }
+  Box<T> temp = boxes[index]; //holds the indexed value in a temp box
+  remove(boxes[index].get()); //removes the elem at the index
+  add(elem); //adds in the elem and sorts accordingly
+  return temp.get(); //returns the original value at specified index
+ }//set
+}//class
